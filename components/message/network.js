@@ -4,16 +4,24 @@ const controller = require('./controller');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-    console.log(req.headers);
-    response.success(req, res, 'lista de mensajes', 200);
+    controller.getMesseges()
+        .then((messageList) => {
+            response.success(req, res, messageList, 200);
+        })
+        .catch((error) => {
+            response.error(req, res, 'Unexpected Error', 500, error);
+        })
+
 });
 router.post('/', (req, res) => {
-    controller.addMessege(body.user, body.message);
-    if(req.query.error == 'ok'){
-        response.error(req, res, 'Error simulado', 500, "Error simulado");
-    }else{
-        response.success(req, res, 'Creado correctamente', 201);
-    }
+    controller.addMessege(req.body.user, req.body.message)
+        .then(( fullMessage) => {
+            response.success(req, res, fullMessage , 201);
+        })
+        .catch(err => {
+            response.error(req, res, 'Informacion invalida', 400, "Error para lograrlo");
+        });
+
 });
 
 module.exports = router;
